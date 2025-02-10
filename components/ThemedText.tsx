@@ -1,88 +1,73 @@
-import { Text, TextProps, StyleSheet, TextStyle, useColorScheme } from 'react-native';
-
-import { Colors } from '@/constants/Colors';
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { Text, TextProps, StyleSheet, Dimensions } from "react-native";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { colors, typography, responsive } from "@/theme/globalStyles";
 
 interface ThemedTextProps extends TextProps {
-  lightColor?: string;
-  darkColor?: string;
   type?:
-    | "link"
     | "title"
-    | "default"
-    | "defaultSemiBold"
     | "subtitle"
-    | "buttonText";
+    | "body"
+    | "caption"
+    | "buttonText"
+    | "link"
+    | "defaultSemiBold";
+  weight?: keyof typeof typography.weights;
 }
 
 export function ThemedText({
   style,
-  lightColor,
-  darkColor,
-  type = "default",
+  type = "body",
+  weight = "regular",
   ...props
 }: ThemedTextProps) {
   const colorScheme = useColorScheme();
-  const defaultColor = Colors[colorScheme ?? "light"].text;
+  const themeColors = colors[colorScheme ?? "light"];
+  const screenWidth = Dimensions.get("window").width;
 
-  const getTypeStyle = (): TextStyle => {
-    const colors = Colors[colorScheme ?? 'light'];
-    
+  const getTextStyle = () => {
+    const baseStyles: any = {
+      color: themeColors.text,
+      fontFamily: typography.fonts.regular,
+      fontWeight: typography.weights[weight],
+    };
+
     switch (type) {
       case "title":
-        return { fontSize: 24, fontWeight: "700", color: defaultColor };
+        baseStyles.fontSize = responsive.fontSize(typography.sizes.title);
+        baseStyles.lineHeight = responsive.fontSize(
+          typography.sizes.title * 1.2
+        );
+        break;
       case "subtitle":
-        return { fontSize: 18, fontWeight: "600", color: defaultColor };
-      case "defaultSemiBold":
-        return { fontWeight: "600", color: defaultColor };
-      case "link":
-        return { color: colors.tint };
+        baseStyles.fontSize = responsive.fontSize(typography.sizes.xl);
+        baseStyles.lineHeight = responsive.fontSize(typography.sizes.xl * 1.3);
+        break;
+      case "body":
+        baseStyles.fontSize = responsive.fontSize(typography.sizes.medium);
+        baseStyles.lineHeight = responsive.fontSize(
+          typography.sizes.medium * 1.5
+        );
+        break;
+      case "caption":
+        baseStyles.fontSize = responsive.fontSize(typography.sizes.small);
+        baseStyles.color = themeColors.secondaryText;
+        break;
       case "buttonText":
-        return { fontSize: 16, fontWeight: "600" };
-      default:
-        return { color: defaultColor };
+        baseStyles.fontSize = responsive.fontSize(typography.sizes.medium);
+        baseStyles.fontWeight = typography.weights.semibold;
+        break;
+      case "link":
+        baseStyles.fontSize = responsive.fontSize(typography.sizes.medium);
+        baseStyles.color = themeColors.tint;
+        break;
+      case "defaultSemiBold":
+        baseStyles.fontSize = responsive.fontSize(typography.sizes.medium);
+        baseStyles.fontWeight = typography.weights.semibold;
+        break;
     }
+
+    return baseStyles;
   };
 
-  const textColor = useThemeColor(
-    { light: lightColor, dark: darkColor },
-    "text"
-  );
-
-  return (
-    <Text
-      style={[
-        getTypeStyle(),
-        style,
-        lightColor || darkColor ? { color: textColor } : null,
-      ]}
-      {...props}
-    />
-  );
+  return <Text style={[getTextStyle(), style]} {...props} />;
 }
-
-const styles = StyleSheet.create({
-  default: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "600",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    lineHeight: 32,
-  },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  link: {
-    lineHeight: 30,
-    fontSize: 16,
-    color: "#0a7ea4",
-  },
-});

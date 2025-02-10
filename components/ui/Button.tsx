@@ -5,41 +5,64 @@ import {
   StyleProp,
   ViewStyle,
   Platform,
+  Dimensions,
 } from "react-native";
-
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Colors } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
+import {
+  colors,
+  spacing,
+  borderRadius,
+  shadows,
+  responsive,
+} from "@/theme/globalStyles";
 
 interface ButtonProps extends PressableProps {
   variant?: "primary" | "secondary";
+  size?: "small" | "medium" | "large";
   title?: string;
   disabled?: boolean;
+  fullWidth?: boolean;
 }
 
 export function Button({
   style,
   variant = "primary",
+  size = "medium",
   title,
   children,
   disabled,
+  fullWidth,
   ...props
 }: ButtonProps) {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
+  const themeColors = colors[colorScheme ?? "light"];
+  const screenWidth = Dimensions.get("window").width;
+
+  const getButtonSize = () => {
+    const baseHeight = size === "small" ? 40 : size === "medium" ? 48 : 56;
+    return responsive.spacing(baseHeight);
+  };
 
   const buttonStyles = [
     styles.button,
     {
-      backgroundColor: variant === "primary" ? colors.tint : "transparent",
-      borderColor: colors.tint,
-      borderWidth: variant === "secondary" ? 1.5 : 0,
+      height: getButtonSize(),
+      backgroundColor:
+        variant === "primary"
+          ? themeColors.buttonPrimary
+          : themeColors.buttonSecondary,
       opacity: disabled ? 0.5 : 1,
+      width: fullWidth ? "100%" : "auto",
     },
+    shadows.medium,
     style,
   ];
 
-  const textColor = variant === "primary" ? colors.buttonText : colors.tint;
+  const textColor =
+    variant === "primary"
+      ? themeColors.buttonText
+      : themeColors.buttonTextSecondary;
 
   return (
     <Pressable
@@ -52,7 +75,13 @@ export function Button({
       {title ? (
         <ThemedText
           type="buttonText"
-          style={[{ color: textColor }, styles.buttonText]}
+          style={[
+            styles.buttonText,
+            {
+              color: textColor,
+              fontSize: responsive.fontSize(16),
+            },
+          ]}
         >
           {title}
         </ThemedText>
@@ -65,33 +94,22 @@ export function Button({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 16,
-    padding: 18,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 56,
-    ...Platform.select({
-      web: {
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-      },
-      default: {
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 2,
-      },
-    }),
+    paddingVertical: spacing.medium,
+    paddingHorizontal: spacing.large,
+    minHeight: 48, // Ajout d'une hauteur minimale
+    borderRadius: borderRadius.large,
+    minWidth: 120,
   },
   pressed: {
     transform: [{ scale: 0.98 }],
-    opacity: 0.95,
+    opacity: 0.9,
   },
   buttonText: {
+    textAlign: "center",
     fontSize: 16,
+    lineHeight: 20, // Ajout d'une hauteur de ligne fixe
     fontWeight: "600",
     letterSpacing: 0.3,
   },

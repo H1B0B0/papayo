@@ -29,7 +29,6 @@ export default function DeckSelectScreen() {
       flex: 1,
       paddingHorizontal: "6%",
       paddingTop: Platform.OS === "ios" ? "12%" : "8%",
-      backgroundColor: styleVariables.backgroundColor,
     },
     setting: {
       marginTop: "8%",
@@ -75,9 +74,7 @@ export default function DeckSelectScreen() {
         />
       </ThemedView>
 
-      <Button onPress={handleNext} style={styles.button}>
-        <ThemedText type="buttonText">Next</ThemedText>
-      </Button>
+      <Button title="Next" onPress={handleNext} style={styles.button} />
     </ThemedView>
   );
 }

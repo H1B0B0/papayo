@@ -1,7 +1,12 @@
 import { View, StyleSheet, Platform, Pressable } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Colors } from "@/constants/Colors";
+import { colors, typography, shadows } from "@/theme/globalStyles";
 import { ThemedText } from "@/components/ThemedText";
+import Animated, {
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 interface SliderProps {
   value: number;
@@ -19,7 +24,7 @@ export function Slider({
   step = 1,
 }: SliderProps) {
   const colorScheme = useColorScheme();
-  const tintColor = Colors[colorScheme ?? "light"].tint;
+  const themeColors = colors[colorScheme ?? "light"];
 
   // Ajouter des boutons + et - pour un contrôle plus précis
   const increment = () => {
@@ -34,18 +39,34 @@ export function Slider({
     }
   };
 
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
   return (
     <View style={styles.container}>
       <View style={styles.controls}>
-        <Pressable onPress={decrement} style={styles.button}>
+        <AnimatedPressable
+          onPress={decrement}
+          style={[
+            styles.button,
+            { backgroundColor: themeColors.buttonSecondary },
+          ]}
+        >
           <ThemedText style={styles.buttonText}>−</ThemedText>
-        </Pressable>
-        <View style={styles.valueContainer}>
+        </AnimatedPressable>
+        <View
+          style={[styles.valueContainer, { backgroundColor: themeColors.card }]}
+        >
           <ThemedText style={styles.value}>{value}</ThemedText>
         </View>
-        <Pressable onPress={increment} style={styles.button}>
+        <AnimatedPressable
+          onPress={increment}
+          style={[
+            styles.button,
+            { backgroundColor: themeColors.buttonSecondary },
+          ]}
+        >
           <ThemedText style={styles.buttonText}>+</ThemedText>
-        </Pressable>
+        </AnimatedPressable>
       </View>
     </View>
   );
@@ -53,45 +74,64 @@ export function Slider({
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: 70,
     justifyContent: "center",
-    marginVertical: 16,
+    marginVertical: 12,
   },
   controls: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 16,
+    gap: 20,
   },
   button: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Platform.select({ ios: "#E5E5EA", android: "#DEDEDE" }),
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    ...shadows.medium,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.light.shadow,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   buttonText: {
-    fontSize: 28,
-    fontWeight: "400",
-    marginTop: -2, // Ajustement pour le centrage visuel
+    fontSize: typography.sizes.xl,
+    fontFamily: typography.fonts.regular,
+    fontWeight: typography.weights.medium,
+    marginTop: Platform.OS === "ios" ? -2 : 0,
+    opacity: 0.8,
   },
   valueContainer: {
-    minWidth: 60,
-    height: 40,
-    backgroundColor: "rgba(0,0,0,0.05)",
-    borderRadius: 20,
+    minWidth: 80,
+    height: 44,
+    borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
+    ...shadows.small,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.light.shadow,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   value: {
-    fontSize: 20,
-    fontWeight: "600",
+    fontSize: typography.sizes.large,
+    fontWeight: typography.weights.semibold,
     textAlign: "center",
   },
 });

@@ -18,6 +18,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Button } from "@/components/ui/Button";
 import { Player, Game, getGame, updateGame } from "@/utils/storage";
 import { colors as globalColors, spacing } from "@/theme/globalStyles";
+import { typography, borderRadius, shadows } from "@/theme/globalStyles";
 
 interface SelectedCard {
   value: number;
@@ -166,9 +167,11 @@ export default function GameScreen() {
       right: spacing.medium,
       top: spacing.medium,
       bottom: spacing.medium,
-      borderRadius: 28,
+      borderRadius: borderRadius.xl,
       overflow: "hidden",
       zIndex: 1000,
+      backgroundColor: appColors.card,
+      ...shadows.large,
     },
     elevation: {
       shadowColor: "#000",
@@ -200,16 +203,10 @@ export default function GameScreen() {
     cardButton: {
       width: "18%",
       aspectRatio: 1,
-      borderRadius: 16,
+      borderRadius: borderRadius.large,
       padding: spacing.small,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 1,
-      },
-      shadowOpacity: 0.22,
-      shadowRadius: 2.22,
-      elevation: 3,
+      backgroundColor: appColors.buttonSecondary,
+      ...shadows.medium,
     },
     papayoSection: {
       flexDirection: "row",
@@ -218,20 +215,15 @@ export default function GameScreen() {
     papayoButton: {
       padding: spacing.medium,
       marginVertical: spacing.small,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 1,
-      },
-      shadowOpacity: 0.22,
-      shadowRadius: 2.22,
-      elevation: 3,
+      borderRadius: borderRadius.large,
+      backgroundColor: appColors.buttonSecondary,
+      ...shadows.medium,
     },
     doneButtonContainer: {
       padding: spacing.medium,
       borderTopWidth: 1,
-      borderTopColor: "rgba(0,0,0,0.1)",
-      backgroundColor: "transparent",
+      borderTopColor: appColors.border,
+      backgroundColor: appColors.card,
     },
     doneButton: {
       width: "100%",
@@ -246,13 +238,19 @@ export default function GameScreen() {
       flexWrap: "wrap",
       gap: spacing.small,
       marginBottom: spacing.medium,
-      minHeight: 50,
+      padding: spacing.medium,
+      borderRadius: borderRadius.large,
+      backgroundColor: appColors.card,
+      minHeight: 60,
+      ...shadows.small,
     },
     selectedCard: {
       padding: spacing.medium,
-      backgroundColor: "rgba(0,0,0,0.05)",
-      borderRadius: 8,
-      fontSize: 16,
+      backgroundColor: appColors.buttonSecondary,
+      borderRadius: borderRadius.medium,
+      fontSize: typography.sizes.medium,
+      color: appColors.text,
+      ...shadows.small,
     } as TextStyle,
     controlSection: {
       flexDirection: "row",
@@ -261,7 +259,19 @@ export default function GameScreen() {
       marginTop: spacing.medium,
       paddingTop: spacing.medium,
       borderTopWidth: 1,
-      borderTopColor: "rgba(0,0,0,0.1)",
+      borderTopColor: appColors.border,
+      backgroundColor: appColors.card,
+      borderRadius: borderRadius.large,
+      padding: spacing.medium,
+      ...shadows.small,
+    },
+    zeroButton: {
+      width: "18%",
+      aspectRatio: 1,
+      borderRadius: borderRadius.large,
+      padding: spacing.small,
+      backgroundColor: appColors.buttonSecondary,
+      ...shadows.medium,
     },
     headerSection: {
       flexDirection: "row",
@@ -270,7 +280,7 @@ export default function GameScreen() {
       marginBottom: spacing.medium,
       paddingBottom: spacing.medium,
       borderBottomWidth: 1,
-      borderBottomColor: "rgba(0,0,0,0.1)",
+      borderBottomColor: appColors.border,
     },
     headerTop: {
       flexDirection: "row",
@@ -298,26 +308,30 @@ export default function GameScreen() {
       marginTop: spacing.small,
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: "space-between",
       gap: spacing.small,
+      paddingRight: spacing.small,
     },
     progressContainer: {
       flex: 1,
-    },
-    scoreText: {
-      fontSize: 12,
-      marginTop: spacing.small,
-      opacity: 0.7,
+      marginRight: spacing.medium,
     },
     currentScoreContainer: {
       backgroundColor: appColors.tint, // updated here
-      paddingHorizontal: spacing.small,
+      paddingHorizontal: spacing.medium,
       paddingVertical: spacing.small,
-      borderRadius: 12,
+      borderRadius: borderRadius.large,
+      minWidth: 60,
+      alignItems: "center",
     },
     currentScore: {
       color: "white",
       fontWeight: "600",
-      fontSize: 14,
+      fontSize: typography.sizes.medium,
+    },
+    scoreText: {
+      fontSize: typography.sizes.small,
+      opacity: 0.8,
     },
   });
 
@@ -413,78 +427,98 @@ export default function GameScreen() {
     return { selected: selectedPapayos, total: totalPapayos };
   };
 
-  const renderCardSelectorContent = (playerId: number) => (
-    <View
-      style={{
-        flex: 1,
-        padding: spacing.medium,
-        backgroundColor: appColors.background,
-      }}
-    >
-      <ThemedView style={styles.headerSection}>
-        <ThemedText type="subtitle" style={{ color: appColors.text }}>
-          Select Cards
-        </ThemedText>
-        <ThemedText style={{ color: appColors.text }}>
-          Total: {calculatePlayerScore(selectedCards[playerId] || [])}
-        </ThemedText>
-      </ThemedView>
+  const renderCardSelectorContent = (playerId: number) => {
+    const remainingPoints = calculateRemainingPoints();
+    const isLastPlayer = playerId === (game?.players?.length ?? 0) - 1;
 
-      <ThemedView style={styles.selectedCardsPreview}>
-        {selectedCards[playerId]?.map((card: SelectedCard, index: number) => (
-          <ThemedText
-            key={index}
-            style={[styles.selectedCard, { color: appColors.text }]}
-          >
-            {card.isPapayo ? "🃏 Papayo (40)" : card.value}
-          </ThemedText>
-        ))}
-      </ThemedView>
-
-      <ThemedView style={styles.normalCards}>
-        {Array.from({ length: 20 }, (_, i) => i + 1).map((value) => {
-          const isAvailable = isCardAvailable(value, false);
-          return (
-            <Button
-              key={value}
-              title={value.toString()}
-              onPress={() => handleSelectCard(playerId, value, false)}
-              disabled={!isAvailable}
-              variant={isAvailable ? "primary" : "secondary"}
-              style={[styles.cardButton, !isAvailable && styles.disabledCard]}
-            />
-          );
-        })}
-      </ThemedView>
-
-      <ThemedView style={styles.papayoSection}>
-        <Button
-          title={`🃏 Papayo (40) ${
-            game ? `[${getPapayoInfo().selected}/${getPapayoInfo().total}]` : ""
-          }`}
-          onPress={() => handleSelectCard(playerId, 7, true)}
-          disabled={!isCardAvailable(7, true)}
-          variant={isCardAvailable(7, true) ? "primary" : "secondary"}
-          style={styles.papayoButton}
-        />
-      </ThemedView>
-
-      <ThemedView style={styles.controlSection}>
-        <ThemedView>
-          <ThemedText style={{ color: appColors.text }}>
-            Selected: {calculatePlayerScore(selectedCards[playerId] || [])}
+    return (
+      <ScrollView
+        style={{
+          flex: 1,
+          backgroundColor: appColors.background,
+        }}
+        contentContainerStyle={{
+          padding: spacing.medium,
+          paddingBottom: spacing.xxl,
+          gap: spacing.medium,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <ThemedView style={styles.headerSection}>
+          <ThemedText type="subtitle" style={{ color: appColors.text }}>
+            Select Cards
           </ThemedText>
           <ThemedText style={{ color: appColors.text }}>
-            Total deck points: {game ? getTotalDeckPoints(game) : 0}
-          </ThemedText>
-          <ThemedText style={{ color: appColors.text }}>
-            Remaining: {calculateRemainingPoints()}
+            Total: {calculatePlayerScore(selectedCards[playerId] || [])}
           </ThemedText>
         </ThemedView>
-        {/* Note: "Done" button is rendered outside this function */}
-      </ThemedView>
-    </View>
-  );
+
+        <ThemedView style={styles.selectedCardsPreview}>
+          {selectedCards[playerId]?.map((card: SelectedCard, index: number) => (
+            <ThemedText
+              key={index}
+              style={[styles.selectedCard, { color: appColors.text }]}
+            >
+              {card.isPapayo ? "🃏 Papayo (40)" : card.value}
+            </ThemedText>
+          ))}
+        </ThemedView>
+
+        <ThemedView style={styles.normalCards}>
+          {/* Ajout du bouton 0 */}
+          <Button
+            key="zero"
+            title="0"
+            onPress={() => handleSelectCard(playerId, 0, false)}
+            variant="primary"
+            style={[styles.zeroButton]}
+          />
+
+          {Array.from({ length: 20 }, (_, i) => i + 1).map((value) => {
+            const isAvailable = isCardAvailable(value, false);
+            return (
+              <Button
+                key={value}
+                title={value.toString()}
+                onPress={() => handleSelectCard(playerId, value, false)}
+                disabled={!isAvailable}
+                variant={isAvailable ? "primary" : "secondary"}
+                style={[styles.cardButton, !isAvailable && styles.disabledCard]}
+              />
+            );
+          })}
+        </ThemedView>
+
+        <ThemedView style={styles.papayoSection}>
+          <Button
+            title={`🃏 Papayo (40) ${
+              game
+                ? `[${getPapayoInfo().selected}/${getPapayoInfo().total}]`
+                : ""
+            }`}
+            onPress={() => handleSelectCard(playerId, 7, true)}
+            disabled={!isCardAvailable(7, true)}
+            variant={isCardAvailable(7, true) ? "primary" : "secondary"}
+            style={styles.papayoButton}
+          />
+        </ThemedView>
+
+        <ThemedView style={styles.controlSection}>
+          <ThemedView>
+            <ThemedText style={{ color: appColors.text }}>
+              Selected: {calculatePlayerScore(selectedCards[playerId] || [])}
+            </ThemedText>
+            <ThemedText style={{ color: appColors.text }}>
+              Total deck points: {game ? getTotalDeckPoints(game) : 0}
+            </ThemedText>
+            <ThemedText style={{ color: appColors.text }}>
+              Remaining: {calculateRemainingPoints()}
+            </ThemedText>
+          </ThemedView>
+        </ThemedView>
+      </ScrollView>
+    );
+  };
 
   // Calcul du total attendu par manche en fonction du nombre de decks
   const calculateExpectedRoundTotal = (game: GameWithDice): number => {

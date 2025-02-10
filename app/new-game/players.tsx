@@ -6,15 +6,25 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
-  useColorScheme,
+  Dimensions,
+  View,
 } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Button } from "@/components/ui/Button";
-import { Slider } from "@/components/ui/Slider"; // Updated import
+import { Slider } from "@/components/ui/Slider";
 import { saveGame } from "@/utils/storage";
 import { ThemedInput } from "@/components/ui/ThemedInput";
+import {
+  colors,
+  spacing,
+  borderRadius,
+  shadows,
+  responsive,
+  typography,
+} from "@/theme/globalStyles";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function PlayersScreen() {
   const { deckCount } = useLocalSearchParams();
@@ -25,12 +35,8 @@ export default function PlayersScreen() {
   const [gameName, setGameName] = useState("");
 
   const colorScheme = useColorScheme();
-  const styleVariables = {
-    backgroundColor: colorScheme === "dark" ? "#1A1A1A" : "#F5F5F5",
-    cardBackground: colorScheme === "dark" ? "#2A2A2A" : "#FFFFFF",
-    inputBackground: colorScheme === "dark" ? "#333333" : "#F8F8F8",
-    borderColor: colorScheme === "dark" ? "#3A3A3A" : "#E5E5E5",
-  };
+  const themeColors = colors[colorScheme ?? "light"];
+  const screenWidth = Dimensions.get("window").width;
 
   const handlePlayerNameChange = (index: number, text: string) => {
     const newPlayers = [...players];
@@ -59,8 +65,8 @@ export default function PlayersScreen() {
       playerCount,
       pointLimit: Number(pointLimit),
       diceCount: numDecks,
-      papayoCount: numDecks, // Un seul Papayoo par deck
-      maxPointsPerRound: 250 * numDecks, // 250 points par deck
+      papayoCount: numDecks,
+      maxPointsPerRound: 250 * numDecks,
       date: new Date(),
       currentRound: 1,
       players: players.map((name) => ({
@@ -78,63 +84,76 @@ export default function PlayersScreen() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: Platform.OS === "ios" ? "6%" : "5%",
-      backgroundColor: styleVariables.backgroundColor,
+      backgroundColor: themeColors.background,
+      padding: responsive.spacing(spacing.large),
     },
     setting: {
-      marginVertical: "4%",
-      padding: "5%",
-      backgroundColor: styleVariables.cardBackground,
-      borderRadius: 20,
+      marginVertical: spacing.medium,
+      padding: spacing.large,
+      backgroundColor: themeColors.card,
+      borderRadius: borderRadius.xl,
       borderWidth: Platform.OS === "ios" ? 1 : 0,
-      borderColor: styleVariables.borderColor,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: colorScheme === "dark" ? 0.4 : 0.1,
-      shadowRadius: 4,
-      elevation: 2,
+      borderColor: themeColors.border,
+      ...shadows.medium,
+    },
+    settingContent: {
+      marginTop: spacing.medium,
     },
     playerInput: {
       flexDirection: "row",
       alignItems: "center",
-      marginVertical: 6,
-      padding: "4%",
-      borderRadius: 16,
-      backgroundColor: "white",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3,
-      elevation: 2,
+      marginVertical: spacing.small,
+      padding: spacing.medium,
+      borderRadius: borderRadius.xl,
+      backgroundColor: themeColors.card,
+      ...shadows.small,
     },
     input: {
-      flex: 0.7,
-      marginLeft: 12,
-      padding: 12,
-      borderRadius: 12,
-      backgroundColor: styleVariables.inputBackground,
-      borderWidth: 1,
-      borderColor: styleVariables.borderColor,
+      flex: 1,
+      marginLeft: spacing.medium,
+      height: 50,
+      backgroundColor: themeColors.inputBackground,
+      borderRadius: borderRadius.large,
+      paddingHorizontal: spacing.medium,
+      fontSize: typography.sizes.medium,
+      color: themeColors.text,
+      ...Platform.select({
+        ios: {
+          shadowColor: themeColors.shadow,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 2,
+        },
+      }),
     },
     button: {
-      marginTop: "auto",
-      marginBottom: Platform.OS === "ios" ? 20 : 10,
-      paddingVertical: 16,
-      marginHorizontal: "4%",
-      borderRadius: 16,
-    },
-    pointInput: {
-      width: "100%",
-      borderWidth: 1,
-      borderColor: "#ccc",
-      borderRadius: 8,
-      padding: "3%", // updated
-      fontSize: 16,
-      marginTop: "2%", // updated
+      marginTop: spacing.xl,
+      marginBottom: Platform.OS === "ios" ? spacing.xxl : spacing.xl,
+      paddingVertical: spacing.medium,
+      marginHorizontal: spacing.medium,
+      borderRadius: borderRadius.large,
+      alignSelf: "center",
+      width: "90%",
     },
     list: {
       width: "100%",
-      paddingHorizontal: 10,
+      paddingHorizontal: spacing.small,
+    },
+    playerNumber: {
+      minWidth: 80,
+      opacity: 0.8,
+    },
+    buttonContainer: {
+      marginTop: spacing.xl,
+      marginBottom: Platform.OS === "ios" ? spacing.xxl : spacing.xl,
+      paddingVertical: spacing.medium,
+      marginHorizontal: spacing.medium,
+      borderRadius: borderRadius.large,
+      alignSelf: "center",
+      width: "90%",
     },
   });
 
@@ -145,33 +164,40 @@ export default function PlayersScreen() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 20}
     >
       <ScrollView
+        style={{ flex: 1, backgroundColor: themeColors.background }}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         contentContainerStyle={{
-          paddingBottom: Platform.OS === "ios" ? 180 : 120,
           flexGrow: 1,
+          paddingBottom: Platform.OS === "ios" ? spacing.xxl : spacing.xl,
         }}
       >
-        <ThemedView style={styles.container}>
+        <ThemedView style={[styles.container, { flex: 1 }]}>
           <ThemedText type="title">Game Setup</ThemedText>
 
           <ThemedView style={styles.setting}>
-            <ThemedText type="subtitle">Game Name (optional)</ThemedText>
+            <ThemedText type="subtitle">Game Name</ThemedText>
             <ThemedInput
-              placeholder="Enter game name"
+              placeholder="Enter game name (optional)"
               value={gameName}
               onChangeText={setGameName}
+              variant="filled"
               style={styles.input}
+              autoCapitalize="words"
+              returnKeyType="next"
             />
           </ThemedView>
 
           <ThemedView style={styles.setting}>
-            <ThemedText type="subtitle">Point Limit:</ThemedText>
+            <ThemedText type="subtitle">Point Limit</ThemedText>
             <ThemedInput
-              style={styles.input}
               keyboardType="number-pad"
               value={pointLimit}
               onChangeText={setPointLimit}
               placeholder="Enter point limit"
+              variant="filled"
+              style={styles.input}
+              returnKeyType="done"
             />
           </ThemedView>
 
@@ -184,23 +210,26 @@ export default function PlayersScreen() {
               onValueChange={handlePlayerCountChange}
               minimum={3}
               maximum={8 * numDecks}
-              step={1} // ensure it moves one unit at a time
+              step={1}
             />
           </ThemedView>
 
           <FlatList
+            scrollEnabled={false}
             data={players}
             renderItem={({ item, index }) => (
               <ThemedView style={styles.playerInput}>
-                <ThemedText>Player {index + 1}</ThemedText>
+                <ThemedText style={styles.playerNumber} type="body">
+                  Player {index + 1}
+                </ThemedText>
                 <ThemedInput
-                  style={[
-                    styles.input,
-                    { borderWidth: 1, borderColor: "#ccc" },
-                  ]} // refined style
+                  style={styles.input}
+                  variant="filled"
                   value={item}
                   onChangeText={(text) => handlePlayerNameChange(index, text)}
                   placeholder={`Player ${index + 1}`}
+                  autoCapitalize="words"
+                  returnKeyType="next"
                 />
               </ThemedView>
             )}
@@ -208,12 +237,15 @@ export default function PlayersScreen() {
             style={styles.list}
           />
 
-          <Button
-            title="Start Game"
-            onPress={startGame}
-            disabled={players.some((name) => !name.trim()) || !pointLimit}
-            style={styles.button}
-          />
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Start Game"
+              onPress={startGame}
+              disabled={players.some((name) => !name.trim()) || !pointLimit}
+              style={styles.button}
+              fullWidth
+            />
+          </View>
         </ThemedView>
       </ScrollView>
     </KeyboardAvoidingView>

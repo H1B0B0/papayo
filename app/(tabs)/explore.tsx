@@ -29,13 +29,19 @@ export default function TabTwoScreen() {
       <Collapsible title="File-based routing">
         <ThemedText>
           This app has two screens:{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
+            app/(tabs)/index.tsx
+          </ThemedText>{" "}
           and{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
+            app/(tabs)/explore.tsx
+          </ThemedText>
         </ThemedText>
         <ThemedText>
           The layout file in{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{" "}
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
+            app/(tabs)/_layout.tsx
+          </ThemedText>{" "}
           sets up the tab navigator.
         </ThemedText>
         <ExternalLink href="https://docs.expo.dev/router/introduction">
@@ -45,16 +51,24 @@ export default function TabTwoScreen() {
       <Collapsible title="Android, iOS, and web support">
         <ThemedText>
           You can open this project on Android, iOS, and the web. To open the
-          web version, press <ThemedText type="defaultSemiBold">w</ThemedText>{" "}
+          web version, press{" "}
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
+            w
+          </ThemedText>{" "}
           in the terminal running this project.
         </ThemedText>
       </Collapsible>
       <Collapsible title="Images">
         <ThemedText>
           For static images, you can use the{" "}
-          <ThemedText type="defaultSemiBold">@2x</ThemedText> and{" "}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to
-          provide files for different screen densities
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
+            @2x
+          </ThemedText>{" "}
+          and{" "}
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
+            @3x
+          </ThemedText>{" "}
+          suffixes to provide files for different screen densities
         </ThemedText>
         <Image
           source={require("@/assets/images/react-logo.png")}
@@ -66,7 +80,10 @@ export default function TabTwoScreen() {
       </Collapsible>
       <Collapsible title="Custom fonts">
         <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText>{" "}
+          Open{" "}
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
+            app/_layout.tsx
+          </ThemedText>{" "}
           to see how to load{" "}
           <ThemedText style={{ fontFamily: "SpaceMono" }}>
             custom fonts such as this one.
@@ -79,9 +96,11 @@ export default function TabTwoScreen() {
       <Collapsible title="Light and dark mode components">
         <ThemedText>
           This template has light and dark mode support. The{" "}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook
-          lets you inspect what the user's current color scheme is, and so you
-          can adjust UI colors accordingly.
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
+            useColorScheme()
+          </ThemedText>{" "}
+          hook lets you inspect what the user's current color scheme is, and so
+          you can adjust UI colors accordingly.
         </ThemedText>
         <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
           <ThemedText type="link">Learn more</ThemedText>
@@ -90,11 +109,11 @@ export default function TabTwoScreen() {
       <Collapsible title="Animations">
         <ThemedText>
           This template includes an example of an animated component. The{" "}
-          <ThemedText type="defaultSemiBold">
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
             components/HelloWave.tsx
           </ThemedText>{" "}
           component uses the powerful{" "}
-          <ThemedText type="defaultSemiBold">
+          <ThemedText type="body" style={{ fontWeight: "600" }}>
             react-native-reanimated
           </ThemedText>{" "}
           library to create a waving hand animation.
@@ -103,7 +122,7 @@ export default function TabTwoScreen() {
           ios: (
             <ThemedText>
               The{" "}
-              <ThemedText type="defaultSemiBold">
+              <ThemedText type="body" style={{ fontWeight: "600" }}>
                 components/ParallaxScrollView.tsx
               </ThemedText>{" "}
               component provides a parallax effect for the header image.

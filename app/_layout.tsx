@@ -10,7 +10,7 @@ import { View, Platform } from "react-native";
 import "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/ui/Button";
-import { colors as globalColors, spacing, fonts } from "@/theme/globalStyles";
+import { colors, typography, spacing } from "@/theme/globalStyles";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 export const unstable_settings = {
@@ -39,7 +39,7 @@ export default function RootLayout() {
     return <View style={{ flex: 1, backgroundColor: "#fff" }} />;
   }
 
-  const appColors = globalColors[colorScheme ?? "light"];
+  const themeColors = colors[colorScheme ?? "light"];
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -48,18 +48,18 @@ export default function RootLayout() {
           headerShown: false,
           animation: "slide_from_right",
           headerStyle: {
-            backgroundColor: appColors.background,
+            backgroundColor: themeColors.background,
           },
           headerTitleStyle: {
-            fontFamily: fonts.medium,
-            fontSize: 20,
+            fontFamily: typography.fonts.mono,
+            fontSize: typography.sizes.xl,
             fontWeight: "600",
           },
           headerShadowVisible: false,
           contentStyle: {
-            backgroundColor: appColors.background,
+            backgroundColor: themeColors.background,
             paddingHorizontal: spacing.medium,
-            paddingBottom: Platform.OS === "ios" ? 50 : 30,
+            paddingBottom: Platform.OS === "ios" ? spacing.xxl : spacing.xl,
           },
         }}
       >
