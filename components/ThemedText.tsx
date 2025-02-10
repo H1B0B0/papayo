@@ -1,34 +1,62 @@
-import { Text, type TextProps, StyleSheet } from 'react-native';
+import { Text, TextProps, StyleSheet, TextStyle, useColorScheme } from 'react-native';
 
+import { Colors } from '@/constants/Colors';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
-export type ThemedTextProps = TextProps & {
+interface ThemedTextProps extends TextProps {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
-};
+  type?:
+    | "link"
+    | "title"
+    | "default"
+    | "defaultSemiBold"
+    | "subtitle"
+    | "buttonText";
+}
 
 export function ThemedText({
   style,
   lightColor,
   darkColor,
-  type = 'default',
-  ...rest
+  type = "default",
+  ...props
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const colorScheme = useColorScheme();
+  const defaultColor = Colors[colorScheme ?? "light"].text;
+
+  const getTypeStyle = (): TextStyle => {
+    const colors = Colors[colorScheme ?? 'light'];
+    
+    switch (type) {
+      case "title":
+        return { fontSize: 24, fontWeight: "700", color: defaultColor };
+      case "subtitle":
+        return { fontSize: 18, fontWeight: "600", color: defaultColor };
+      case "defaultSemiBold":
+        return { fontWeight: "600", color: defaultColor };
+      case "link":
+        return { color: colors.tint };
+      case "buttonText":
+        return { fontSize: 16, fontWeight: "600" };
+      default:
+        return { color: defaultColor };
+    }
+  };
+
+  const textColor = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    "text"
+  );
 
   return (
     <Text
       style={[
-        { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
+        getTypeStyle(),
         style,
+        lightColor || darkColor ? { color: textColor } : null,
       ]}
-      {...rest}
+      {...props}
     />
   );
 }
@@ -41,20 +69,20 @@ const styles = StyleSheet.create({
   defaultSemiBold: {
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     lineHeight: 32,
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   link: {
     lineHeight: 30,
     fontSize: 16,
-    color: '#0a7ea4',
+    color: "#0a7ea4",
   },
 });
