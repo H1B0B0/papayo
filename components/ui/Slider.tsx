@@ -2,11 +2,7 @@ import { View, StyleSheet, Platform, Pressable } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { colors, typography, shadows } from "@/theme/globalStyles";
 import { ThemedText } from "@/components/ThemedText";
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
 interface SliderProps {
   value: number;

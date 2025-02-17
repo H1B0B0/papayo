@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
-  Dimensions,
   View,
 } from "react-native";
 
@@ -36,7 +35,6 @@ export default function PlayersScreen() {
 
   const colorScheme = useColorScheme();
   const themeColors = colors[colorScheme ?? "light"];
-  const screenWidth = Dimensions.get("window").width;
 
   const handlePlayerNameChange = (index: number, text: string) => {
     const newPlayers = [...players];

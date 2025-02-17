@@ -4,8 +4,6 @@ import {
   StyleSheet,
   StyleProp,
   ViewStyle,
-  Platform,
-  Dimensions,
 } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { ThemedText } from "@/components/ThemedText";
@@ -37,7 +35,6 @@ export function Button({
 }: ButtonProps) {
   const colorScheme = useColorScheme();
   const themeColors = colors[colorScheme ?? "light"];
-  const screenWidth = Dimensions.get("window").width;
 
   const getButtonSize = () => {
     const baseHeight = size === "small" ? 40 : size === "medium" ? 48 : 56;

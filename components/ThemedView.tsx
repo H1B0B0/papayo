@@ -1,10 +1,4 @@
-import {
-  View,
-  ViewProps,
-  StyleSheet,
-  Dimensions,
-  Platform,
-} from "react-native";
+import { View, ViewProps, StyleSheet, Platform } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { colors, responsive } from "@/theme/globalStyles";
 

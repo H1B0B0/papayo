@@ -24,7 +24,7 @@ export function ProgressBar({ progress, color }: ProgressBarProps) {
       damping: 15,
       stiffness: 100,
     });
-  }, [progress]);
+  }, [progress, width]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     width: `${width.value * 100}%`,

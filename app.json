@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Papayo",
+    "owner": "bitepapayo",
     "slug": "Papayo",
     "version": "1.0.0",
     "orientation": "portrait",

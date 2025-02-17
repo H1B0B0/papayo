@@ -1,4 +1,4 @@
-import { Text, TextProps, StyleSheet, Dimensions } from "react-native";
+import { Text, TextProps } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { colors, typography, responsive } from "@/theme/globalStyles";
 
@@ -22,7 +22,6 @@ export function ThemedText({
 }: ThemedTextProps) {
   const colorScheme = useColorScheme();
   const themeColors = colors[colorScheme ?? "light"];
-  const screenWidth = Dimensions.get("window").width;
 
   const getTextStyle = () => {
     const baseStyles: any = {
@@ -35,7 +34,7 @@ export function ThemedText({
       case "title":
         baseStyles.fontSize = responsive.fontSize(typography.sizes.title);
         baseStyles.lineHeight = responsive.fontSize(
-          typography.sizes.title * 1.2
+          typography.sizes.title * 1.2,
         );
         break;
       case "subtitle":
@@ -45,7 +44,7 @@ export function ThemedText({
       case "body":
         baseStyles.fontSize = responsive.fontSize(typography.sizes.medium);
         baseStyles.lineHeight = responsive.fontSize(
-          typography.sizes.medium * 1.5
+          typography.sizes.medium * 1.5,
         );
         break;
       case "caption":

@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useLayoutEffect,
+} from "react";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import {
   StyleSheet,
@@ -25,43 +30,6 @@ interface SelectedCard {
   isPapayo: boolean;
 }
 
-// Ajouter une interface pour les règles du jeu
-interface GameRules {
-  cardsPerPlayer: number;
-  passCount: number;
-  removedCards: number[];
-}
-
-const getGameRules = (playerCount: number): GameRules => {
-  switch (playerCount) {
-    case 3:
-      return { cardsPerPlayer: 20, passCount: 5, removedCards: [] };
-    case 4:
-      return { cardsPerPlayer: 15, passCount: 5, removedCards: [] };
-    case 5:
-      return { cardsPerPlayer: 12, passCount: 4, removedCards: [] };
-    case 6:
-      return { cardsPerPlayer: 10, passCount: 3, removedCards: [] };
-    case 7:
-    case 8:
-      return { cardsPerPlayer: 8, passCount: 3, removedCards: [1] };
-    default:
-      return { cardsPerPlayer: 20, passCount: 5, removedCards: [] };
-  }
-};
-
-interface CardSelectorProps {
-  playerId: number;
-  selectedCards: SelectedCard[];
-  onSelectCard: (value: number, isPapayo: boolean) => void;
-  onClose: () => void;
-}
-
-interface RenderItemProps {
-  item: Player;
-  index: number;
-}
-
 interface GameWithDice extends Game {
   currentDiceValue?: number;
 }
@@ -75,14 +43,6 @@ export default function GameScreen() {
   }>({});
   const [showCardSelector, setShowCardSelector] = useState<number | null>(null);
 
-  // Move the home button handler here so it is available for the header
-  const handleHomePress = () => {
-    Alert.alert("Return to Home", "Are you sure you want to leave the game?", [
-      { text: "Cancel", style: "cancel" },
-      { text: "Leave", onPress: () => router.replace("/") },
-    ]);
-  };
-
   // Supprimer le bouton home et son handler car on utilise déjà le back button natif
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -90,15 +50,15 @@ export default function GameScreen() {
     });
   }, [navigation, game?.name]);
 
-  useEffect(() => {
-    loadGame();
-  }, [id]);
-
-  const loadGame = async () => {
+  const loadGame = useCallback(async () => {
     const gameData = await getGame(Number(id));
     setGame(gameData);
     setSelectedCards({});
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadGame();
+  }, [id, loadGame]);
 
   // Modifier le style du cardSelector pour utiliser le colorScheme correctement
   const colorScheme = useColorScheme();
@@ -359,7 +319,7 @@ export default function GameScreen() {
   const handleSelectCard = (
     playerId: number,
     value: number,
-    isPapayo: boolean
+    isPapayo: boolean,
   ) => {
     setSelectedCards((prev) => ({
       ...prev,
@@ -382,7 +342,7 @@ export default function GameScreen() {
     const totalDeckPoints = getTotalDeckPoints(game);
     const usedPoints = Object.values(selectedCards).reduce(
       (sum: number, cards: SelectedCard[]) => sum + calculatePlayerScore(cards),
-      0
+      0,
     );
     return totalDeckPoints - usedPoints;
   };
@@ -394,31 +354,24 @@ export default function GameScreen() {
 
     // Vérifier d'abord si la carte est disponible dans le jeu
     const availableCardsOfValue = game.availableCards.filter((card) =>
-      isPapayo ? card.isPapayo : !card.isPapayo && card.value === value
+      isPapayo ? card.isPapayo : !card.isPapayo && card.value === value,
     );
 
     if (availableCardsOfValue.length === 0) return false;
 
     // Ensuite vérifier combien de ces cartes sont déjà sélectionnées
     const selectedCount = allSelectedCards.filter((card) =>
-      isPapayo ? card.isPapayo : !card.isPapayo && card.value === value
+      isPapayo ? card.isPapayo : !card.isPapayo && card.value === value,
     ).length;
 
     return selectedCount < availableCardsOfValue.length;
-  };
-
-  const handleScoreChange = (playerId: number, score: string) => {
-    const numScore = Number(score) || 0;
-    const newCards = { ...selectedCards };
-    newCards[playerId] = [{ value: numScore, isPapayo: false }];
-    setSelectedCards(newCards);
   };
 
   const getPapayoInfo = () => {
     if (!game?.availableCards) return { selected: 0, total: 0 };
 
     const totalPapayos = game.availableCards.filter(
-      (card) => card.isPapayo
+      (card) => card.isPapayo,
     ).length;
     const selectedPapayos = Object.values(selectedCards)
       .flat()
@@ -428,9 +381,6 @@ export default function GameScreen() {
   };
 
   const renderCardSelectorContent = (playerId: number) => {
-    const remainingPoints = calculateRemainingPoints();
-    const isLastPlayer = playerId === (game?.players?.length ?? 0) - 1;
-
     return (
       <ScrollView
         style={{
@@ -532,7 +482,7 @@ export default function GameScreen() {
     const expectedTotal = getTotalDeckPoints(game);
     const totalRoundScore = Object.values(selectedCards).reduce(
       (sum: number, cards: SelectedCard[]) => sum + calculatePlayerScore(cards),
-      0
+      0,
     );
     return totalRoundScore === expectedTotal;
   };
@@ -552,7 +502,7 @@ export default function GameScreen() {
       Alert.alert(
         "Invalid Score",
         `The total round score must equal ${expectedTotal} points.`,
-        [{ text: "OK" }]
+        [{ text: "OK" }],
       );
       return;
     }
@@ -572,7 +522,7 @@ export default function GameScreen() {
     if (gameOver) {
       // Sort players by total score
       const sortedPlayers = [...newGame.players].sort(
-        (a, b) => a.total - b.total
+        (a, b) => a.total - b.total,
       );
 
       // Create ranking string
@@ -591,7 +541,7 @@ export default function GameScreen() {
           },
           { text: "Home", onPress: () => router.replace("/") },
         ],
-        { cancelable: false }
+        { cancelable: false },
       );
     } else {
       setGame(newGame);

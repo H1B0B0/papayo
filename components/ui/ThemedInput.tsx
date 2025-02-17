@@ -1,14 +1,23 @@
-import { StyleSheet, TextInput, TextInputProps, Platform, View } from 'react-native';
-import { colors, typography, spacing, borderRadius, shadows } from '@/theme/globalStyles';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { StyleSheet, TextInput, TextInputProps, Platform } from "react-native";
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+} from "@/theme/globalStyles";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 interface ThemedInputProps extends TextInputProps {
-  variant?: 'default' | 'filled';
+  variant?: "default" | "filled";
 }
 
-export function ThemedInput({ style, variant = 'default', ...props }: ThemedInputProps) {
+export function ThemedInput({
+  style,
+  variant = "default",
+  ...props
+}: ThemedInputProps) {
   const colorScheme = useColorScheme();
-  const themeColors = colors[colorScheme ?? 'light'];
+  const themeColors = colors[colorScheme ?? "light"];
 
   const styles = StyleSheet.create({
     input: {
@@ -18,8 +27,9 @@ export function ThemedInput({ style, variant = 'default', ...props }: ThemedInpu
       color: themeColors.text,
       padding: spacing.medium,
       borderRadius: borderRadius.large,
-      backgroundColor: variant === 'filled' ? themeColors.inputBackground : 'transparent',
-      borderWidth: variant === 'default' ? 1 : 0,
+      backgroundColor:
+        variant === "filled" ? themeColors.inputBackground : "transparent",
+      borderWidth: variant === "default" ? 1 : 0,
       borderColor: themeColors.border,
       ...Platform.select({
         ios: {
